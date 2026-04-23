@@ -10,6 +10,12 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    env:
+      USER: ${{ secrets.USER }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      DBNAME: ${{ secrets.DBNAME }}
+      HOST: ${{ secrets.HOST }}
+      PORT: ${{ secrets.PORT }}
     strategy:
       matrix:
         go_version: ['1.18', '1.17', '>=1.18']
