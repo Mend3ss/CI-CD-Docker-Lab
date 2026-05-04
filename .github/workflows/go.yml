@@ -34,7 +34,7 @@ jobs:
       run: docker compose up -d
 
     - name: Test
-      run: go test -v main_test.go 
+      run: go test -v main_test.go
       
   
   build:
@@ -47,3 +47,11 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build
       run: go build -v main.go
+  
+  docker:
+    needs: build #Esse job (docker) rodara após a execução do job "build"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
+    - name: Build Docker Image
+      run: docker build -t my-go-app .
