@@ -50,5 +50,4 @@ jobs:
   
   docker:
     needs: build #Esse job (docker) rodara após a execução do job "build"
-    runs-on: ubuntu-latest
     uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
