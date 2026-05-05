@@ -51,3 +51,4 @@ jobs:
   docker:
     needs: build #Esse job (docker) rodara após a execução do job "build"
     uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
+    secrets: inherit #Permite que o job "docker" utilize os segredos definidos nesse workflow (go.yml)
