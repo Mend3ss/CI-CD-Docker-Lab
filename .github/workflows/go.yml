@@ -52,6 +52,6 @@ jobs:
     needs: build #Esse job (docker) rodara após a execução do job "build"
     runs-on: ubuntu-latest
     steps:
-    - uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
-    # - name: Build Docker Image
-    #   run: docker build -t my-go-app .
+    # - uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
+    - name: Build Docker Image
+      run: docker build -t my-go-app .
