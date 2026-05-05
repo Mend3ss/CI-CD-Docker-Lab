@@ -19,3 +19,10 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }} #Utiliza o nome de usuário armazenado nos segredos do repositório
         password: ${{ secrets.DOCKER_PASSWORD }} #Utiliza a senha armazenada nos segredos do repositório
+    
+    - name: push Docker Image
+      uses: docker/build-push-action@v3 #Constrói e envia a imagem Docker para o Docker Hub
+      with:
+        context: . #Define o contexto de construção como o diretório atual
+        push: true #Habilita o envio da imagem após a construção
+        tags: my-go-app:latest #Define a tag da imagem Docker, que pode ser personalizada conforme necessário
