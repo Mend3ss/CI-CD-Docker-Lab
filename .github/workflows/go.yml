@@ -43,20 +43,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: go build -v main.go
+      run: go build -v -o main.exe main.go
   
-
-  upload:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: go-artifact
-        path: main
+        path: main.exe
 
   docker:
-    needs: upload #Esse job (docker) rodara após a execução do job "upload"
+    needs: build #Esse job (docker) rodara após a execução do job "build"
     uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
     secrets: inherit #Permite que o job "docker" utilize os segredos definidos nesse workflow (go.yml)
