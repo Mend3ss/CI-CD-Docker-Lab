@@ -30,4 +30,5 @@ jobs:
       with:
         context: . #Define o contexto de construção como o diretório atual
         push: true #Habilita o envio da imagem após a construção
-        tags: my-go-app:latest #Define a tag da imagem Docker, que pode ser personalizada conforme necessário
+        tags: joaomendes3822/my-go-app:latest #Define a tag da imagem Docker, que pode ser personalizada conforme necessário
+        registry: docker.io #Especifica o registro Docker, que é o Docker Hub neste caso
