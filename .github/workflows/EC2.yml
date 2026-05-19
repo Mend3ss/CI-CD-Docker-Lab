@@ -1,0 +1,28 @@
+name: Docker
+
+on:
+#  workflow_call: #Permite que esse workflow seja chamado por outros workflows, como o "go.yml" por exemplo.
+  workflow_call:
+
+jobs:
+
+  EC2:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3 #Utiliza dados que estão aramanzenados no ambiente
+
+    - name: Download a build artifact
+      uses: actions/download-artifact@v4 #Baixa os artefatos gerados por outros jobs, como o "build" do "go.yml"
+      with:
+        name: go-artifact #Especifica o nome do artefato a ser baixado, que deve corresponder ao nome definido no job "build" do "go.yml"
+
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@master #Realiza a conexão SSH e executa comandos remotos para implantar a aplicação na instância EC2
+      with:
+        host: ${{ secrets.EC2_HOST }} #Utiliza o endereço IP ou hostname da instância EC2 armazenado nos segredos do repositório
+        username: ${{ secrets.EC2_USERNAME }} #Utiliza o nome de usuário para SSH armazenado nos segredos do repositório
+        key: ${{ secrets.EC2_SSH_KEY }} #Utiliza a chave SSH privada armazenada nos segredos do repositório
+        script: |
+          cd /path/to/deployment/directory #Navega até o diretório de implantação na instância EC2
+          mv main.exe . #Move o arquivo executável baixado para o diretório de implantação
+          ./main.exe & #Executa o aplicativo em segundo plano
