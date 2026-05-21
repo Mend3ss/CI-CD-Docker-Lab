@@ -23,6 +23,10 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }} #Utiliza o nome de usuário para SSH armazenado nos segredos do repositório
         key: ${{ secrets.EC2_SSH_KEY }} #Utiliza a chave SSH privada armazenada nos segredos do repositório
         script: |
-          cd /path/to/deployment/directory #Navega até o diretório de implantação na instância EC2
-          mv main.exe . #Move o arquivo executável baixado para o diretório de implantação
-          ./main.exe & #Executa o aplicativo em segundo plano
+          export DBHOST=${{ secrets.DBHOST }}
+          export DBPORT=${{ secrets.DBPORT }}
+          export DBUSER=${{ secrets.DBUSER }}
+          export DBPASSWORD=${{ secrets.DBPASSWORD }}
+          export DBNAME=${{ secrets.DBNAME }}
+          chmod +x main.exe
+          nohup ./main.exe > nohup.out 2> nohup.err < /dev/null &
