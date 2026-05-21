@@ -58,5 +58,5 @@ jobs:
 
   deploy_ec2:
     needs: docker #Esse job (deploy_ec2) rodara após a execução do job "docker"
-    uses: ./.github/workflows/Deploy_EC2.yml #O job "deploy_ec2" rodara com base no conteundo de "Deploy_EC2.yml"
+    uses: ./.github/workflows/EC2.yml #O job "deploy_ec2" rodara com base no conteundo de "Deploy_EC2.yml"
     secrets: inherit #Permite que o job "deploy_ec2" utilize os segredos definidos nesse workflow (go.yml)
