@@ -6,5 +6,9 @@ WORKDIR	/app
 
 COPY	./main.exe main
 
+RUN chmod +x main
+
+COPY ./templates/ templates/
+
 CMD	["./main"]
 
