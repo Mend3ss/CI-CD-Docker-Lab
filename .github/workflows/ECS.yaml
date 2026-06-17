@@ -30,7 +30,7 @@ jobs:
       with:
         task-definition: task-definition.json
         container-name: Go
-        image: joaomendes3822/my-go-app:latest
+        image: joaomendes3822/my-go-app:${{ github.run_number }} #Aqui, a tag da imagem Docker é atualizada para refletir a nova versão da aplicação, utilizando o número da execução do workflow para garantir que cada imagem seja única.
         environment-variables: |
           DBHOST=${{ secrets.DBHOST }}
           DBUSER=${{ secrets.DBUSER }}
