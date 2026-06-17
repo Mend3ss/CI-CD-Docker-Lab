@@ -1,13 +1,18 @@
 name: Go
 
+#Define quando a rotina será executada. Nesse caso, a rotina será executada quando houver um push ou pull request em qualquer branch do repositório.
+
 on:
   push:
     branches: [ '*' ]
   pull_request:
     branches: [ '*' ]
 
+#Define os jobs que serão executados na rotina. Cada job é um conjunto de etapas que serão executadas em um ambiente específico.
+
 jobs:
 
+#Define o job "test" que será executado em um ambiente Ubuntu. Esse job é responsável por configurar o ambiente de teste, criar um banco de dados e executar os testes automatizados.
   test:
     runs-on: ubuntu-latest
     env:
@@ -22,21 +27,33 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+#Set up Go: Essa etapa utiliza a ação "actions/setup-go" para configurar a versão do Go especificada na matriz de estratégias. A matriz de estratégias permite testar o código em várias versões do Go, garantindo compatibilidade e identificando possíveis problemas em diferentes ambientes.
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
         go-version: ${{ matrix.go_version }}
-      
+
+# Criação do arquivo .env: Esta etapa cria dinamicamente o arquivo .env necessário para preencher as variáveis do Docker Compose, reaproveitando as variáveis que já estão no contexto do ambiente do job (env).
+    - name: Generate .env for Docker Compose
+      run: |
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > .env
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+        echo "PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }}" >> .env
+        echo "PGADMIN_DEFAULT_PASSWORD=${{ secrets.PGADMIN_DEFAULT_PASSWORD }}" >> .env
+
+#Docker Compose: As próximas etapas utilizam o Docker Compose para construir e iniciar um ambiente de banco de dados necessário para os testes. O comando "docker compose build" é usado para construir as imagens do Docker, enquanto "docker compose up -d" inicia os contêineres em segundo plano.      
     - name: Build-DB
       run: docker compose build
       
     - name: Create-DB
       run: docker compose up -d
 
+#Test: Finalmente, a etapa "Test" executa os testes automatizados usando o comando "go test". O parâmetro "-v" é usado para exibir detalhes dos testes, facilitando a identificação de falhas ou problemas durante a execução dos testes.
     - name: Test
       run: go test -v main_test.go
       
-  
+#Build: O próximo job, "build", depende do sucesso do job "test". Ele é responsável por compilar o código Go e criar um artefato (main.exe) que será utilizado nos próximos passos do pipeline. Após a compilação, o artefato é enviado para o armazenamento usando a ação "actions/upload-artifact".  
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -51,6 +68,7 @@ jobs:
         name: go-artifact
         path: main.exe
 
+#docker: O job "docker" depende do sucesso do job "build". Ele utiliza o conteúdo do arquivo "Docker.yml" para construir a imagem Docker da aplicação Go. A opção "secrets: inherit" permite que o job "docker" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante a construção da imagem Docker.
   docker:
     needs: build #Esse job (docker) rodara após a execução do job "build"
     uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
@@ -61,6 +79,7 @@ jobs:
   #   uses: ./.github/workflows/EC2.yml #O job "deploy_ec2" rodara com base no conteundo de "Deploy_EC2.yml"
   #   secrets: inherit #Permite que o job "deploy_ec2" utilize os segredos definidos nesse workflow (go.yml)
 
+#deploy_ecs: O job "deploy_ecs" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "ECS.yaml" para implantar a aplicação Go em um cluster Amazon ECS. Assim como no job "docker", a opção "secrets: inherit" permite que o job "deploy_ecs" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante o processo de implantação.
   deploy_ecs:
     needs: docker
     uses: ./.github/workflows/ECS.yaml
