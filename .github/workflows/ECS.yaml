@@ -22,7 +22,7 @@ jobs:
     
 #Copia do task definition: Antes de modificar o arquivo "task-definition.json", é feita uma cópia de backup para garantir que a versão original do arquivo seja preservada. Isso é importante para evitar perda de dados ou configurações caso algo dê errado durante o processo de modificação.
     - name: copia do task definition
-      run: cp task-definition.json task-definition-backup.json
+      run: cp task-definition.json task-definition-backup.json.bak
     
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
@@ -43,6 +43,20 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: Servico_API-Go
+        cluster: API-Go
+        wait-for-service-stability: true
+
+    - name: Request test
+      continue-on-error: true #Essa opção é usada para permitir que o workflow continue mesmo que esta etapa falhe. Isso é útil para evitar que o workflow seja interrompido devido a falhas temporárias ou problemas de conectividade durante a fase de teste.
+      run: echo "REQUEST=0" >> $GITHUB_ENV ; sleep 30s ; wget URL_DO_SEU_ENDPOINT:porta/caminho || echo "REQUEST=1" >> $GITHUB_ENV
+    
+#Rollback: Se a etapa de teste falhar, o workflow irá para a etapa de rollback, onde a definição da tarefa do Amazon ECS é restaurada para a versão de backup. Isso garante que a aplicação volte a funcionar com a configuração anterior, minimizando o impacto de falhas na implantação.
+    - name: Deploy Amazon ECS task definition - Rollback
+      if: ${{ env.REQUEST != 0 }}
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: task-definition-backup.json.bak
         service: Servico_API-Go
         cluster: API-Go
         wait-for-service-stability: true
