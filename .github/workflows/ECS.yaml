@@ -12,8 +12,8 @@ jobs:
     - name: configurando credenciais da AWS
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.ID_CHAVE_ACESSO }}
-        aws-secret-access-key: ${{ secrets.CHAVE_SECRETA }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
 #Obtendo arquivo da tarefa: Essa etapa utiliza o comando "aws ecs describe-task-definition" para obter a definição da tarefa do Amazon ECS. A definição da tarefa é um arquivo JSON que descreve como a aplicação deve ser executada no cluster ECS, incluindo informações sobre os contêineres, recursos e variáveis de ambiente. O resultado do comando é salvo em um arquivo chamado "task-definition.json" para uso posterior.    
@@ -43,8 +43,8 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: Servico_API-Go
-        cluster: API-Go
+        service: myapp-service
+        cluster: myapp-cluster
         wait-for-service-stability: true
 
     - name: Request test
@@ -57,6 +57,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: task-definition-backup.json.bak
-        service: Servico_API-Go
-        cluster: API-Go
+        service: myapp-service
+        cluster: myapp-cluster
         wait-for-service-stability: true
