@@ -81,10 +81,10 @@ jobs:
   #   secrets: inherit #Permite que o job "deploy_ec2" utilize os segredos definidos nesse workflow (go.yml)
 
 #deploy_infra: O job "deploy_infra" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "Infra-Test.yml" para provisionar a infraestrutura necessária para a aplicação Go. Assim como no job "docker", a opção "secrets: inherit" permite que o job "deploy_infra" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante o processo de provisionamento da infraestrutura.
-  # deploy_infra:
-  #   needs: docker #Esse job (deploy_infra) rodara após a execução do job "docker"
-  #   uses: ./.github/workflows/Infra-Test.yml #O job "deploy_infra" rodara com base no conteundo de "Infra-Test.yml"
-  #   secrets: inherit #Permite que o job "deploy_infra" utilize os segredos definidos nesse workflow (go.yml)
+  deploy_infra:
+    needs: docker #Esse job (deploy_infra) rodara após a execução do job "docker"
+    uses: ./.github/workflows/Infra-Test.yml #O job "deploy_infra" rodara com base no conteundo de "Infra-Test.yml"
+    secrets: inherit #Permite que o job "deploy_infra" utilize os segredos definidos nesse workflow (go.yml)
 
 #deploy_ecs: O job "deploy_ecs" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "ECS.yaml" para implantar a aplicação Go em um cluster Amazon ECS. Assim como no job "docker", a opção "secrets: inherit" permite que o job "deploy_ecs" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante o processo de implantação.
   deploy_ecs:
