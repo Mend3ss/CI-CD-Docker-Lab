@@ -9,11 +9,30 @@ jobs:
   LoadTest:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
+    - uses: actions/checkout@v3 #Utiliza dados que estão aramanzenados no ambiente
+
     - name: configurando credenciais da AWS
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.ID_CHAVE_ACESSO }}
-        aws-secret-access-key: ${{ secrets.CHAVE_SECRETA }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
+
+#Clonando repositório: Esta etapa utiliza o comando "git clone" para clonar o repositório "Infra_CI" do GitHub. O repositório clonado pode conter arquivos de configuração, scripts ou outros recursos necessários para a execução dos testes de carga.
+    - run: git clone https://github.com/Mend3ss/Terraform.git
+
+#HashiCorp - Setup Terraform: Esta etapa utiliza a ação "hashicorp/setup-terraform" para configurar o ambiente de execução do Terraform. O Terraform é uma ferramenta de infraestrutura como código (IaC) que permite definir e provisionar infraestrutura de forma automatizada. Configurar o Terraform é essencial para garantir que os testes de carga possam ser executados em um ambiente controlado e consistente, especialmente se os testes envolverem a criação ou modificação de recursos na nuvem.
+    - name: HashiCorp - Setup Terraform
+      uses: hashicorp/setup-terraform@v2.0.3
+
+#Terraform Init e Apply: As próximas etapas utilizam os comandos "terraform init" e "terraform apply" para inicializar o ambiente do Terraform e aplicar as configurações definidas nos arquivos de configuração do Terraform. O comando "terraform init" é usado para preparar o ambiente, baixando os plugins necessários e configurando o backend, enquanto o comando "terraform apply" é usado para criar ou modificar os recursos de infraestrutura conforme definido nos arquivos de configuração. A opção "-auto-approve" é usada para evitar a necessidade de confirmação manual durante a aplicação das mudanças, permitindo que o processo seja totalmente automatizado.
+    - run: terraform -chdir=./Terraform/ECS-Lab init
+
+#Terraform Destroy: Esta etapa utiliza o comando "terraform destroy" para destruir os recursos de infraestrutura criados pelo Terraform. O comando "terraform destroy" é usado para remover os recursos provisionados, garantindo que o ambiente seja limpo após a execução dos testes de carga. A opção "-auto-approve" é usada para evitar a necessidade de confirmação manual durante a destruição dos recursos, permitindo que o processo seja totalmente automatizado.
+    - run: terraform -chdir=./Terraform/ECS-Lab destroy -auto-approve
+
+#Terraform Apply: Esta etapa utiliza o comando "terraform apply" para aplicar as configurações definidas nos arquivos de configuração do Terraform. O comando "terraform apply" é usado para criar ou modificar os recursos de infraestrutura conforme definido nos arquivos de configuração. A opção "-auto-approve" é usada para evitar a necessidade de confirmação manual durante a aplicação das mudanças, permitindo que o processo seja totalmente automatizado.
+    - run: terraform -chdir=./Terraform/ECS-Lab apply -auto-approve
+
+#Gerando comando de teste de carga: Esta etapa utiliza o comando "terraform output" para obter o valor do output "alb_dns_name" definido nos arquivos de configuração do Terraform. O valor obtido é o nome DNS do Application Load Balancer (ALB) criado pelo Terraform, que é necessário para direcionar os testes de carga para o endpoint correto da aplicação. O resultado do comando é salvo em um arquivo chamado "load_test_command.sh", que pode ser utilizado posteriormente para executar os testes de carga.
+    - run: echo "$(terraform -chdir=./Terraform/ECS-Lab output -raw alb_dns_name)"
