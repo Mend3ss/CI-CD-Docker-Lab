@@ -69,6 +69,7 @@ jobs:
         path: main.exe
 
 #docker: O job "docker" depende do sucesso do job "build". Ele utiliza o conteúdo do arquivo "Docker.yml" para construir a imagem Docker da aplicação Go. A opção "secrets: inherit" permite que o job "docker" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante a construção da imagem Docker.
+#Faz o push da imagem Docker para o Docker Hub, utilizando as credenciais armazenadas nos segredos do repositório. A tag da imagem é definida usando o número da execução do workflow para garantir que cada imagem seja única.
   docker:
     needs: build #Esse job (docker) rodara após a execução do job "build"
     uses: ./.github/workflows/Docker.yml #O job "docker" rodara com base no conteundo de "Docker.yml"
@@ -79,6 +80,12 @@ jobs:
   #   uses: ./.github/workflows/EC2.yml #O job "deploy_ec2" rodara com base no conteundo de "Deploy_EC2.yml"
   #   secrets: inherit #Permite que o job "deploy_ec2" utilize os segredos definidos nesse workflow (go.yml)
 
+#deploy_infra: O job "deploy_infra" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "Infra-Test.yml" para provisionar a infraestrutura necessária para a aplicação Go. Assim como no job "docker", a opção "secrets: inherit" permite que o job "deploy_infra" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante o processo de provisionamento da infraestrutura.
+  deploy_infra:
+    needs: docker #Esse job (deploy_infra) rodara após a execução do job "docker"
+    uses: ./.github/workflows/Infra-Test.yml #O job "deploy_infra" rodara com base no conteundo de "Infra-Test.yml"
+    secrets: inherit #Permite que o job "deploy_infra" utilize os segredos definidos nesse workflow (go.yml)
+
 #deploy_ecs: O job "deploy_ecs" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "ECS.yaml" para implantar a aplicação Go em um cluster Amazon ECS. Assim como no job "docker", a opção "secrets: inherit" permite que o job "deploy_ecs" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante o processo de implantação.
   deploy_ecs:
     needs: docker
@@ -86,8 +93,8 @@ jobs:
     secrets: inherit
 
 #LoadTest: O job "loadtest" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "LoadTest.yml" para executar testes de carga na aplicação Go. A opção "if: ${{ github.ref_name == 'master' }}" garante que os testes de carga só serão executados quando houver um push ou pull request na branch "master", evitando a execução de testes de carga em branches de desenvolvimento ou feature.
-  loadtest:
-    needs: docker
-    if: ${{ github.ref_name == 'master' }} #Essa condição garante que o job "loadtest" só será executado quando houver um push ou pull request na branch "master". Isso é útil para evitar a execução de testes de carga em branches de desenvolvimento ou feature, onde as mudanças ainda estão em andamento e podem não estar prontas para serem testadas em um ambiente de produção.
-    uses: ./.github/workflows/LoadTest.yml
-    secrets: inherit
+  # loadtest:
+  #   needs: docker
+  #   if: ${{ github.ref_name == 'master' }} #Essa condição garante que o job "loadtest" só será executado quando houver um push ou pull request na branch "master". Isso é útil para evitar a execução de testes de carga em branches de desenvolvimento ou feature, onde as mudanças ainda estão em andamento e podem não estar prontas para serem testadas em um ambiente de produção.
+  #   uses: ./.github/workflows/LoadTest.yml
+  #   secrets: inherit
