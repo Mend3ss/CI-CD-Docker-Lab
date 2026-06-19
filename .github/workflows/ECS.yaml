@@ -32,11 +32,11 @@ jobs:
         container-name: myapp
         image: joaomendes3822/my-go-app
         environment-variables: |
-          HOST=${{ secrets.DBHOST }}
-          USER=${{ secrets.DBUSER }}
-          PASSWORD=${{ secrets.DBPASSWORD }}
+          HOST=${{ secrets.HOST }}
+          USER=${{ secrets.USER }}
+          PASSWORD=${{ secrets.PASSWORD }}
           DBNAME=${{ secrets.DBNAME }}
-          PORT=${{ secrets.DBPORT }}
+          PORT=${{ secrets.PORT }}
           
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
