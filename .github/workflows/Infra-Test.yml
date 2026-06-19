@@ -21,6 +21,8 @@ jobs:
 #Clonando repositório: Esta etapa utiliza o comando "git clone" para clonar o repositório "Infra_CI" do GitHub. O repositório clonado pode conter arquivos de configuração, scripts ou outros recursos necessários para a execução dos testes de carga.
     - run: git clone https://github.com/Mend3ss/Terraform.git
 
+    - run: cat Terraform/ECS-Lab/variables.tf
+
 #HashiCorp - Setup Terraform: Esta etapa utiliza a ação "hashicorp/setup-terraform" para configurar o ambiente de execução do Terraform. O Terraform é uma ferramenta de infraestrutura como código (IaC) que permite definir e provisionar infraestrutura de forma automatizada. Configurar o Terraform é essencial para garantir que os testes de carga possam ser executados em um ambiente controlado e consistente, especialmente se os testes envolverem a criação ou modificação de recursos na nuvem.
     - name: HashiCorp - Setup Terraform
       uses: hashicorp/setup-terraform@v2.0.3

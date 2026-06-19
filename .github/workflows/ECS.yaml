@@ -30,7 +30,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
-        container-name: Go
+        container-name: myapp
         image: joaomendes3822/my-go-app
         environment-variables: |
           DBHOST=${{ secrets.DBHOST }}
