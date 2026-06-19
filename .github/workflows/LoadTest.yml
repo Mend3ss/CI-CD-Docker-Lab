@@ -31,8 +31,10 @@ jobs:
 #Terraform Destroy: Esta etapa utiliza o comando "terraform destroy" para destruir os recursos de infraestrutura criados pelo Terraform. O comando "terraform destroy" é usado para remover os recursos provisionados, garantindo que o ambiente seja limpo após a execução dos testes de carga. A opção "-auto-approve" é usada para evitar a necessidade de confirmação manual durante a destruição dos recursos, permitindo que o processo seja totalmente automatizado.
     - run: terraform -chdir=./Terraform/ECS-Lab destroy -auto-approve
 
-#Terraform Apply: Esta etapa utiliza o comando "terraform apply" para aplicar as configurações definidas nos arquivos de configuração do Terraform. O comando "terraform apply" é usado para criar ou modificar os recursos de infraestrutura conforme definido nos arquivos de configuração. A opção "-auto-approve" é usada para evitar a necessidade de confirmação manual durante a aplicação das mudanças, permitindo que o processo seja totalmente automatizado.
-    - run: terraform -chdir=./Terraform/ECS-Lab apply -auto-approve
+# #Terraform Apply: Esta etapa utiliza o comando "terraform apply" para aplicar as configurações definidas nos arquivos de configuração do Terraform. O comando "terraform apply" é usado para criar ou modificar os recursos de infraestrutura conforme definido nos arquivos de configuração. A opção "-auto-approve" é usada para evitar a necessidade de confirmação manual durante a aplicação das mudanças, permitindo que o processo seja totalmente automatizado.
+#     - run: terraform -chdir=./Terraform/ECS-Lab apply -auto-approve
 
-#Gerando comando de teste de carga: Esta etapa utiliza o comando "terraform output" para obter o valor do output "alb_dns_name" definido nos arquivos de configuração do Terraform. O valor obtido é o nome DNS do Application Load Balancer (ALB) criado pelo Terraform, que é necessário para direcionar os testes de carga para o endpoint correto da aplicação. O resultado do comando é salvo em um arquivo chamado "load_test_command.sh", que pode ser utilizado posteriormente para executar os testes de carga.
-    - run: echo "$(terraform -chdir=./Terraform/ECS-Lab output -raw alb_dns_name)"
+# #Gerando comando de teste de carga: Esta etapa utiliza o comando "terraform output" para obter o valor do output "alb_dns_name" definido nos arquivos de configuração do Terraform. O valor obtido é o nome DNS do Application Load Balancer (ALB) criado pelo Terraform, que é necessário para direcionar os testes de carga para o endpoint correto da aplicação. O resultado do comando é salvo em um arquivo chamado "load_test_command.sh", que pode ser utilizado posteriormente para executar os testes de carga.
+#     - run: echo "$(terraform -chdir=./Terraform/ECS-Lab output -raw alb_dns_name)"
+
+    - run: terraform -chdir=./Terraform/ECS-Lab destroy -auto-approve
