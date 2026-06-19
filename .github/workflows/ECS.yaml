@@ -16,7 +16,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-# ##ESSA TASK DEFINITION AINDA NAO EXISTE, POR ISSO O ERRO. TALVEZ ELE DEVESSE VIR DEPOIS, VAMOS VERIFICAR O FLUXO
 # #Obtendo arquivo da tarefa: Essa etapa utiliza o comando "aws ecs describe-task-definition" para obter a definição da tarefa do Amazon ECS. A definição da tarefa é um arquivo JSON que descreve como a aplicação deve ser executada no cluster ECS, incluindo informações sobre os contêineres, recursos e variáveis de ambiente. O resultado do comando é salvo em um arquivo chamado "task-definition.json" para uso posterior.    
     - name: Obtendo arquivo da tarefa
       run: aws ecs describe-task-definition --task-definition myapp-task --query taskDefinition > task-definition.json
@@ -33,12 +32,11 @@ jobs:
         container-name: myapp
         image: joaomendes3822/my-go-app
         environment-variables: |
-          DBHOST=${{ secrets.DBHOST }}
-          DBUSER=${{ secrets.DBUSER }}
-          DBPASSWORD=${{ secrets.DBPASSWORD }}
+          HOST=${{ secrets.DBHOST }}
+          USER=${{ secrets.DBUSER }}
+          PASSWORD=${{ secrets.DBPASSWORD }}
           DBNAME=${{ secrets.DBNAME }}
-          DBPORT=${{ secrets.DBPORT }}
-          DBPORT=8000
+          PORT=${{ secrets.DBPORT }}
           
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1

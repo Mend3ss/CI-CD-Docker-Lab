@@ -19,6 +19,6 @@ services:
       - "54321:80"
     depends_on:
       - postgres
-secrets:
-  my_secret:
-    file: ./db_secrets.txt
+# secrets:
+#   my_secret:
+#     file: ./db_secrets.txt
