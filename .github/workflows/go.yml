@@ -81,20 +81,25 @@ jobs:
   #   secrets: inherit #Permite que o job "deploy_ec2" utilize os segredos definidos nesse workflow (go.yml)
 
 #deploy_infra: O job "deploy_infra" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "Infra-Test.yml" para provisionar a infraestrutura necessária para a aplicação Go. Assim como no job "docker", a opção "secrets: inherit" permite que o job "deploy_infra" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante o processo de provisionamento da infraestrutura.
-  deploy_infra:
-    needs: docker #Esse job (deploy_infra) rodara após a execução do job "docker"
-    uses: ./.github/workflows/Infra-Test.yml #O job "deploy_infra" rodara com base no conteundo de "Infra-Test.yml"
-    secrets: inherit #Permite que o job "deploy_infra" utilize os segredos definidos nesse workflow (go.yml)
+  # deploy_infra:
+  #   needs: docker #Esse job (deploy_infra) rodara após a execução do job "docker"
+  #   uses: ./.github/workflows/Infra-Test.yml #O job "deploy_infra" rodara com base no conteundo de "Infra-Test.yml"
+  #   secrets: inherit #Permite que o job "deploy_infra" utilize os segredos definidos nesse workflow (go.yml)
 
 #deploy_ecs: O job "deploy_ecs" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "ECS.yaml" para implantar a aplicação Go em um cluster Amazon ECS. Assim como no job "docker", a opção "secrets: inherit" permite que o job "deploy_ecs" utilize os segredos definidos no workflow principal (go.yml), garantindo que as credenciais e outras informações sensíveis estejam disponíveis durante o processo de implantação.
   deploy_ecs:
-    needs: docker
+    needs: deploy_infra
     uses: ./.github/workflows/ECS.yaml
     secrets: inherit
 
 #LoadTest: O job "loadtest" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "LoadTest.yml" para executar testes de carga na aplicação Go. A opção "if: ${{ github.ref_name == 'master' }}" garante que os testes de carga só serão executados quando houver um push ou pull request na branch "master", evitando a execução de testes de carga em branches de desenvolvimento ou feature.
   # loadtest:
-  #   needs: docker
+  #   needs: deploy_ecs
   #   if: ${{ github.ref_name == 'master' }} #Essa condição garante que o job "loadtest" só será executado quando houver um push ou pull request na branch "master". Isso é útil para evitar a execução de testes de carga em branches de desenvolvimento ou feature, onde as mudanças ainda estão em andamento e podem não estar prontas para serem testadas em um ambiente de produção.
   #   uses: ./.github/workflows/LoadTest.yml
   #   secrets: inherit
+
+  destroy_infra:
+    needs: deploy_ecs
+    uses: ./.github/workflows/Destroy-Infra.yml
+    secrets: inherit
