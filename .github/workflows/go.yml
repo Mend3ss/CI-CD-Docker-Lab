@@ -25,7 +25,7 @@ jobs:
       matrix:
         go_version: ['1.18', '1.17', '>=1.18']
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v3 #Utiliza dados que estão aramanzenados no ambiente
 
 #Set up Go: Essa etapa utiliza a ação "actions/setup-go" para configurar a versão do Go especificada na matriz de estratégias. A matriz de estratégias permite testar o código em várias versões do Go, garantindo compatibilidade e identificando possíveis problemas em diferentes ambientes.
     - name: Set up Go
