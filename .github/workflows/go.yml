@@ -84,3 +84,10 @@ jobs:
     needs: docker
     uses: ./.github/workflows/ECS.yaml
     secrets: inherit
+
+#LoadTest: O job "loadtest" depende do sucesso do job "docker". Ele utiliza o conteúdo do arquivo "LoadTest.yml" para executar testes de carga na aplicação Go. A opção "if: ${{ github.ref_name == 'master' }}" garante que os testes de carga só serão executados quando houver um push ou pull request na branch "master", evitando a execução de testes de carga em branches de desenvolvimento ou feature.
+  loadtest:
+    needs: docker
+    if: ${{ github.ref_name == 'master' }} #Essa condição garante que o job "loadtest" só será executado quando houver um push ou pull request na branch "master". Isso é útil para evitar a execução de testes de carga em branches de desenvolvimento ou feature, onde as mudanças ainda estão em andamento e podem não estar prontas para serem testadas em um ambiente de produção.
+    uses: ./.github/workflows/LoadTest.yml
+    secrets: inherit

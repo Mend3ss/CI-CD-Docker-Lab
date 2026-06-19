@@ -1,0 +1,19 @@
+name: Teste de carga
+
+#Workflow Call: O evento "workflow_call" é utilizado para permitir que este workflow seja chamado por outros workflows. Isso é útil para criar uma estrutura modular, onde diferentes partes do processo de CI/CD podem ser definidas em arquivos separados e reutilizadas conforme necessário.
+on:
+  workflow_call:
+
+jobs:
+
+  LoadTest:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: configurando credenciais da AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.ID_CHAVE_ACESSO }}
+        aws-secret-access-key: ${{ secrets.CHAVE_SECRETA }}
+        aws-region: us-east-1
