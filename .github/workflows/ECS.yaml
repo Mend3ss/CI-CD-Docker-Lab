@@ -18,12 +18,12 @@ jobs:
 
 # ##ESSA TASK DEFINITION AINDA NAO EXISTE, POR ISSO O ERRO. TALVEZ ELE DEVESSE VIR DEPOIS, VAMOS VERIFICAR O FLUXO
 # #Obtendo arquivo da tarefa: Essa etapa utiliza o comando "aws ecs describe-task-definition" para obter a definição da tarefa do Amazon ECS. A definição da tarefa é um arquivo JSON que descreve como a aplicação deve ser executada no cluster ECS, incluindo informações sobre os contêineres, recursos e variáveis de ambiente. O resultado do comando é salvo em um arquivo chamado "task-definition.json" para uso posterior.    
-#     - name: Obtendo arquivo da tarefa
-#       run: aws ecs describe-task-definition --task-definition myapp-task:${{ github.run_number }} --query taskDefinition > task-definition.json
+    - name: Obtendo arquivo da tarefa
+      run: aws ecs describe-task-definition --task-definition myapp-task --query taskDefinition > task-definition.json
     
 # #Copia do task definition: Antes de modificar o arquivo "task-definition.json", é feita uma cópia de backup para garantir que a versão original do arquivo seja preservada. Isso é importante para evitar perda de dados ou configurações caso algo dê errado durante o processo de modificação.
-#     - name: copia do task definition
-#       run: cp task-definition.json task-definition-backup.json.bak
+    - name: copia do task definition
+      run: cp task-definition.json task-definition-backup.json.bak
     
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
