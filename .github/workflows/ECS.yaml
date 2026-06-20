@@ -36,7 +36,8 @@ jobs:
           USER=${{ secrets.USER }}
           PASSWORD=${{ secrets.PASSWORD }}
           DBNAME=${{ secrets.DBNAME }}
-          PORT=${{ secrets.PORT }}
+          DBPORT=${{ secrets.PORT }}
+          PORT=8000
           
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
