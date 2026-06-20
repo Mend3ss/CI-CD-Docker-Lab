@@ -48,16 +48,16 @@ jobs:
         cluster: myapp-cluster
         wait-for-service-stability: true
 
-    - name: Request test
-      continue-on-error: true #Essa opção é usada para permitir que o workflow continue mesmo que esta etapa falhe. Isso é útil para evitar que o workflow seja interrompido devido a falhas temporárias ou problemas de conectividade durante a fase de teste.
-      run: echo "REQUEST=0" >> $GITHUB_ENV ; sleep 30s ; wget URL_DO_SEU_ENDPOINT:porta/caminho || echo "REQUEST=1" >> $GITHUB_ENV
+#     - name: Request test
+#       continue-on-error: true #Essa opção é usada para permitir que o workflow continue mesmo que esta etapa falhe. Isso é útil para evitar que o workflow seja interrompido devido a falhas temporárias ou problemas de conectividade durante a fase de teste.
+#       run: echo "REQUEST=0" >> $GITHUB_ENV ; sleep 30s ; wget URL_DO_SEU_ENDPOINT:porta/caminho || echo "REQUEST=1" >> $GITHUB_ENV
     
-#Rollback: Se a etapa de teste falhar, o workflow irá para a etapa de rollback, onde a definição da tarefa do Amazon ECS é restaurada para a versão de backup. Isso garante que a aplicação volte a funcionar com a configuração anterior, minimizando o impacto de falhas na implantação.
-    - name: Deploy Amazon ECS task definition - Rollback
-      if: ${{ env.REQUEST != 0 }}
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: task-definition-backup.json.bak
-        service: myapp-service
-        cluster: myapp-cluster
-        wait-for-service-stability: true
+# #Rollback: Se a etapa de teste falhar, o workflow irá para a etapa de rollback, onde a definição da tarefa do Amazon ECS é restaurada para a versão de backup. Isso garante que a aplicação volte a funcionar com a configuração anterior, minimizando o impacto de falhas na implantação.
+#     - name: Deploy Amazon ECS task definition - Rollback
+#       if: ${{ env.REQUEST != 0 }}
+#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#       with:
+#         task-definition: task-definition-backup.json.bak
+#         service: myapp-service
+#         cluster: myapp-cluster
+#         wait-for-service-stability: true
