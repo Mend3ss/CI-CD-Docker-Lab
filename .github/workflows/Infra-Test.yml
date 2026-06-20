@@ -19,7 +19,7 @@ jobs:
         aws-region: us-east-1
 
 #Clonando repositório: Esta etapa utiliza o comando "git clone" para clonar o repositório "Infra_CI" do GitHub. O repositório clonado pode conter arquivos de configuração, scripts ou outros recursos necessários para a execução dos testes de carga.
-    - run: git clone git clone https://github.com/leollo98/Infra_CI
+    - run: git clone https://github.com/Mend3ss/Terraform.git
 
     - run: cat Terraform/ECS-Lab/variables.tf
 
