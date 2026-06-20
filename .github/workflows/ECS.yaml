@@ -31,6 +31,7 @@ jobs:
         task-definition: task-definition.json
         container-name: myapp
         image: joaomendes3822/my-go-app
+        #O HOST deve ser o DNS do RDS, o USER, PASSWORD, DBNAME e DBPORT devem ser os mesmos do RDS
         environment-variables: |
           HOST=${{ secrets.HOST }}
           USER=${{ secrets.USER }}
